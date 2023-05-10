@@ -5,6 +5,7 @@ let mapEvent
 let workout
 const workouts = []
 let theMarker
+const markers = []
 
 const form = document.querySelector('.form');
 const containerWorkouts = document.querySelector('.workouts');
@@ -22,7 +23,8 @@ function setWorkout(workout) {
 }
 
 function addRunningPopup(workout) {
-    L.marker(workout.coords).addTo(map)
+    theMarker = L.marker(workout.coords)
+    theMarker.addTo(map)
         .bindPopup(L.popup({
             autoClose: false,
             closeOnClick: false,
@@ -31,6 +33,10 @@ function addRunningPopup(workout) {
 
         })).setPopupContent(`🏃‍♂️ Running on ${workout.date.slice(4, 10)}`)
         .openPopup();
+
+    markers.push([theMarker, workout.id])
+
+
 }
 
 function addCyclingPopup(workout) {
@@ -137,9 +143,9 @@ const db = getDatabase()
 
 
 function deleteFunc(e) {
+    let latlng
     const id = e.target.closest('.workout').dataset.id
     const referance = ref(db, 'workouts/' + id)
-    let latlng
 
     workouts.forEach(el => {
         if (el.id === +id) {
@@ -149,12 +155,22 @@ function deleteFunc(e) {
     })
 
     set(referance, null)
+
     document.querySelectorAll('.workout').forEach(el => {
         if (el.dataset.id === id) {
+
             el.remove()
-            window.location.reload()
+
         }
     })
+    markers.forEach(el => {
+        console.log(el)
+        if (el[1] == id) {
+            console.log(el)
+            el[0].remove()
+        }
+    })
+    console.log(id)
 }
 
 function getValues() {
