@@ -164,13 +164,11 @@ function deleteFunc(e) {
         }
     })
     markers.forEach(el => {
-        console.log(el)
         if (el[1] == id) {
-            console.log(el)
             el[0].remove()
         }
     })
-    console.log(id)
+
 }
 
 function getValues() {
